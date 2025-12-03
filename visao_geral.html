@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visão Geral - Módulo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-black-rich: #121212; --color-white-bg: #F4F6F9; --color-white-pure: #FFFFFF;
+            --color-gold-matte: #B9965B; --color-gold-light: #F5EFE6;
+            --color-text-dark: #333333; --color-text-gray: #757575;
+            --color-success: #27AE60; --color-success-bg: #E8F8F5;
+            --color-pending: #F1C40F; --color-pending-bg: #FEF9E7;
+            --color-danger: #E74C3C;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--color-white-bg); padding: 1.5rem; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+
+        /* Header */
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-shrink: 0; }
+        .page-title h2 { font-size: 1.8rem; font-weight: 600; color: var(--color-black-rich); margin: 0; }
+        .page-title p { color: var(--color-text-gray); font-size: 0.9rem; margin: 0; }
+
+        /* KPIs */
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; flex-shrink: 0; }
+        .kpi-card { background: var(--color-white-pure); padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border-left: 4px solid transparent; transition: transform 0.3s; }
+        .kpi-card:hover { transform: translateY(-5px); }
+        .kpi-card.gold-border { border-left-color: var(--color-gold-matte); }
+        .kpi-card.green-border { border-left-color: var(--color-success); }
+        .kpi-card.red-border { border-left-color: var(--color-danger); }
+        .kpi-title { font-size: 0.9rem; color: var(--color-text-gray); margin-bottom: 0.5rem; }
+        .kpi-value { font-size: 1.8rem; font-weight: 700; color: var(--color-black-rich); }
+        .kpi-subtitle { font-size: 0.8rem; color: var(--color-success); margin-top: 5px; font-weight: 500; }
+
+        /* Painéis */
+        .dashboard-panels { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; flex: 1; overflow: hidden; }
+        .panel-box { background: var(--color-white-pure); border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.03); display: flex; flex-direction: column; overflow: hidden; }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-shrink: 0; }
+        .panel-title { font-size: 1.1rem; font-weight: 600; color: var(--color-black-rich); }
+
+        /* Listas */
+        .scrollable-list { flex: 1; overflow-y: auto; padding-right: 5px; }
+        .agenda-list, .finance-list { list-style: none; }
+        .agenda-item, .finance-item { display: flex; align-items: center; padding: 1rem 0; border-bottom: 1px solid #f0f0f0; }
+        .agenda-item:last-child, .finance-item:last-child { border-bottom: none; }
+        
+        .time-badge { background-color: var(--color-gold-light); color: #8A6D3B; padding: 5px 10px; border-radius: 6px; font-weight: 600; font-size: 0.9rem; margin-right: 15px; }
+        .patient-info, .finance-info { flex: 1; }
+        .patient-name, .finance-desc { font-weight: 600; color: var(--color-text-dark); display: block; }
+        .patient-proc, .finance-date { font-size: 0.85rem; color: var(--color-text-gray); }
+        
+        .status-badge-dash { font-size: 0.75rem; padding: 4px 8px; border-radius: 20px; }
+        .status-confirmed { background-color: #E8F8F5; color: var(--color-success); }
+        .status-pending { background-color: #FEF9E7; color: #F1C40F; }
+        
+        .amount-in { color: var(--color-success); font-weight: 600; }
+        .amount-out { color: var(--color-danger); font-weight: 600; }
+
+        @media (max-width: 900px) { .dashboard-panels { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <div class="header-top">
+        <div class="page-title">
+            <h2 id="user-greeting">Olá, Bem-vindo</h2>
+            <p>Resumo da clínica hoje.</p>
+        </div>
+    </div>
+
+    <div class="kpi-grid">
+        <div class="kpi-card gold-border">
+            <p class="kpi-title">Faturamento (Mês)</p>
+            <h3 class="kpi-value">R$ 48.500</h3>
+            <p class="kpi-subtitle">+12% vs mês anterior</p>
+        </div>
+        <div class="kpi-card green-border">
+            <p class="kpi-title">Consultas Hoje</p>
+            <h3 class="kpi-value" id="kpi-today">0</h3>
+            <p class="kpi-subtitle" style="color: #757575;">Agendadas</p>
+        </div>
+        <div class="kpi-card red-border">
+            <p class="kpi-title">Contas a Pagar</p>
+            <h3 class="kpi-value">R$ 2.300</h3>
+            <p class="kpi-subtitle" style="color: var(--color-danger);">Vencem hoje</p>
+        </div>
+    </div>
+
+    <div class="dashboard-panels">
+        <div class="panel-box">
+            <div class="panel-header">
+                <h3 class="panel-title">Agenda de Hoje</h3>
+            </div>
+            <div class="scrollable-list">
+                <ul class="agenda-list" id="dashboard-agenda-list">
+                    </ul>
+            </div>
+        </div>
+
+        <div class="panel-box">
+            <div class="panel-header">
+                <h3 class="panel-title">Financeiro Recente</h3>
+            </div>
+            <div class="scrollable-list">
+                <ul class="finance-list">
+                    <li class="finance-item"><div class="finance-info"><span class="finance-desc">Pgto. Carlos</span><span class="finance-date">Hoje</span></div><span class="finance-amount amount-in">+ R$ 350,00</span></li>
+                    <li class="finance-item"><div class="finance-info"><span class="finance-desc">Material (Luvas)</span><span class="finance-date">Ontem</span></div><span class="finance-amount amount-out">- R$ 120,00</span></li>
+                    <li class="finance-item"><div class="finance-info"><span class="finance-desc">Aluguel</span><span class="finance-date">01/10</span></div><span class="finance-amount amount-out">- R$ 2.500,00</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            // Pega o nome do usuário da URL (?user=Nome)
+            const urlParams = new URLSearchParams(window.location.search);
+            const user = urlParams.get('user');
+            if(user) document.getElementById('user-greeting').innerText = `Olá, ${user}`;
+
+            updateDashboard();
+        };
+
+        function updateDashboard() {
+            const appts = JSON.parse(localStorage.getItem('scarparo_appointments')) || [];
+            const patients = JSON.parse(localStorage.getItem('scarparo_patients')) || [];
+            
+            // Data Hoje Local (YYYY-MM-DD)
+            const today = new Date();
+            const localDate = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+            
+            const todayAppts = appts.filter(a => a.date === localDate);
+            
+            // Atualiza KPI
+            document.getElementById('kpi-today').innerText = todayAppts.length;
+
+            // Atualiza Lista
+            const list = document.getElementById('dashboard-agenda-list');
+            list.innerHTML = '';
+
+            if(todayAppts.length === 0) {
+                list.innerHTML = '<p style="color:#999; text-align:center; padding:2rem;">Sem consultas hoje.</p>';
+            } else {
+                todayAppts.sort((a,b) => a.startTime.localeCompare(b.startTime));
+                todayAppts.forEach(appt => {
+                    const p = patients.find(x => String(x.id) === String(appt.patientId));
+                    const name = p ? p.name : appt.patientName;
+                    const statusClass = appt.status === 'confirmed' ? 'status-confirmed' : 'status-pending';
+                    const statusText = appt.status === 'confirmed' ? 'Confirmado' : 'Pendente';
+                    
+                    list.innerHTML += `
+                    <li class="agenda-item">
+                        <span class="time-badge">${appt.startTime}</span>
+                        <div class="patient-info">
+                            <span class="patient-name">${name}</span>
+                            <span class="patient-proc">${appt.procedure}</span>
+                        </div>
+                        <span class="status-badge-dash ${statusClass}">${statusText}</span>
+                    </li>`;
+                });
+            }
+        }
+    </script>
+</body>
+</html>
