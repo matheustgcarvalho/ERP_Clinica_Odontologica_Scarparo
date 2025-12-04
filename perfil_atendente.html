@@ -5,195 +5,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atendente - Scarparo</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
-        :root {
-            --color-black-rich: #121212;
-            --color-white-bg: #F4F6F9;
-            --color-white-pure: #FFFFFF;
-            --color-gold-matte: #B9965B;
-            --color-text-gray: #757575;
-            --color-danger: #E74C3C;
-        }
-
+        :root { --color-black-rich: #121212; --color-white-bg: #F4F6F9; --color-white-pure: #FFFFFF; --color-gold-matte: #B9965B; --color-text-gray: #757575; --color-danger: #E74C3C; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--color-white-bg); display: flex; height: 100vh; overflow: hidden; }
+        .sidebar { width: 260px; background-color: var(--color-black-rich); color: var(--color-white-pure); display: flex; flex-direction: column; padding: 1.5rem; }
+        .sidebar-header { display: flex; align-items: center; gap: 10px; margin-bottom: 3rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
         
-        body { 
-            background-color: var(--color-white-bg); 
-            display: flex; 
-            height: 100vh; 
-            overflow: hidden; 
-        }
-
-        /* Sidebar */
-        .sidebar { 
-            width: 260px; 
-            background-color: var(--color-black-rich); 
-            color: var(--color-white-pure); 
-            display: flex; 
-            flex-direction: column; 
-            padding: 1.5rem; 
-        }
-
-        .sidebar-header { 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-            margin-bottom: 3rem; 
-            padding-bottom: 1rem; 
-            border-bottom: 1px solid rgba(255,255,255,0.1); 
-        }
-
-        .logo-icon { width: 30px; height: 30px; fill: var(--color-gold-matte); }
+        /* LOGO SIDEBAR */
+        .sidebar-logo-img { width: 40px; height: auto; object-fit: contain; }
+        
         .brand-name { font-size: 1.5rem; font-weight: 700; color: var(--color-gold-matte); letter-spacing: 1px; }
-
-        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
-        
-        .nav-item { 
-            padding: 0.8rem 1rem; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
-            color: #A0A0A0; 
-            font-size: 0.95rem; 
-            transition: all 0.3s; 
-            text-decoration: none; 
-        }
-
-        .nav-item:hover, .nav-item.active { 
-            background-color: rgba(185, 150, 91, 0.15); 
-            color: var(--color-gold-matte); 
-        }
-
-        .nav-item svg { width: 20px; height: 20px; fill: currentColor; }
-
-        .sidebar-footer { 
-            margin-top: auto; 
-            padding-top: 1rem; 
-            border-top: 1px solid rgba(255,255,255,0.1); 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-        }
-
+        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; overflow-y: auto; }
+        .nav-item { padding: 0.8rem 1rem; border-radius: 8px; cursor: grab; display: flex; align-items: center; gap: 12px; color: #A0A0A0; font-size: 0.95rem; transition: all 0.3s; text-decoration: none; }
+        .nav-item:active { cursor: grabbing; }
+        .nav-item.dragging { opacity: 0.5; border: 1px dashed var(--color-gold-matte); background-color: rgba(255,255,255,0.05); }
+        .nav-item:hover, .nav-item.active { background-color: rgba(185, 150, 91, 0.15); color: var(--color-gold-matte); }
+        .nav-item svg { width: 20px; height: 20px; fill: currentColor; pointer-events: none; }
+        .sidebar-footer { margin-top: auto; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
         .user-profile { display: flex; align-items: center; gap: 10px; }
         .user-avatar { width: 40px; height: 40px; background-color: var(--color-text-gray); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: 700; color: #fff; }
         .user-info p { font-size: 0.85rem; color: #fff; }
         .user-info span { font-size: 0.75rem; color: #888; }
-        
         .btn-logout { background: none; border: none; cursor: pointer; color: #888; transition: 0.2s; padding: 5px; }
         .btn-logout:hover { color: var(--color-danger); }
         .btn-logout svg { width: 20px; height: 20px; fill: currentColor; }
-
-        /* Main Content */
-        .main-content { 
-            flex: 1; 
-            padding: 1.5rem; 
-            position: relative; 
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Sections */
-        .tab-section { 
-            display: none; 
-            height: 100%; 
-            flex-direction: column; 
-            animation: fadeIn 0.3s ease;
-        }
+        .main-content { flex: 1; overflow: hidden; position: relative; display: flex; flex-direction: column; }
+        .tab-section { display: none; height: 100%; flex-direction: column; }
         .tab-section.active { display: flex; }
-        
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* Iframe Style */
-        iframe { 
-            width: 100%; 
-            height: 100%; 
-            border: none; 
-            flex: 1;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-            background: #fff;
-        }
+        iframe { width: 100%; height: 100%; border: none; flex: 1; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); background: #fff; }
     </style>
 </head>
 <body>
-
     <nav class="sidebar">
         <div class="sidebar-header">
-            <svg class="logo-icon" viewBox="0 0 512 512"><path d="M416 128c-10.7-33.8-38.3-64.6-77.1-77.9C311.2 40.5 281.4 35.7 256 35.7s-55.2 4.8-82.9 14.4C134.3 63.4 106.7 94.2 96 128c-15.5 48.9-10.4 97 1.7 137.6 15.6 52.3 53.3 118 84.3 171.4 6.9 11.9 19.3 19 32.7 19h82.6c13.4 0 25.8-7.1 32.7-19 31-53.4 68.7-119.1 84.3-171.4C426.4 225 431.5 176.9 416 128z"/></svg>
+            <img src="logo.png" alt="Logo" class="sidebar-logo-img">
             <span class="brand-name">Scarparo</span>
         </div>
-        
-        <ul class="nav-menu">
-            <li class="nav-item active" onclick="switchTab('agenda', this)">
-                <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
-                Agenda
-            </li>
-            <li class="nav-item" onclick="switchTab('pacientes', this)">
-                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                Pacientes
-            </li>
-            <li class="nav-item" onclick="switchTab('orcamento', this)">
-                <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-                Orçamentos
-            </li>
+        <ul class="nav-menu" id="sortable-menu">
+            <li class="nav-item active" draggable="true" data-tab="agenda" onclick="switchTab('agenda', this)"><svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>Agenda</li>
+            <li class="nav-item" draggable="true" data-tab="pacientes" onclick="switchTab('pacientes', this)"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>Pacientes</li>
+            <li class="nav-item" draggable="true" data-tab="orcamento" onclick="switchTab('orcamento', this)"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>Orçamentos</li>
         </ul>
-
         <div class="sidebar-footer">
-            <div class="user-profile">
-                <div class="user-avatar">J</div>
-                <div class="user-info">
-                    <p>Jéssica</p>
-                    <span>Atendente</span>
-                </div>
-            </div>
-            <button class="btn-logout" title="Sair" onclick="logout()">
-                <svg viewBox="0 0 24 24"><path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 012 2v2h-2V4H5v16h9v-2h2v2a2 2 0 01-2 2H5a2 2 0 01-2-2V4a2 2 0 01-2-2h9z"/></svg>
-            </button>
+            <div class="user-profile"><div class="user-avatar">J</div><div class="user-info"><p>Jéssica</p><span>Atendente</span></div></div>
+            <button class="btn-logout" title="Sair" onclick="logout()"><svg viewBox="0 0 24 24"><path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 012 2v2h-2V4H5v16h9v-2h2v2a2 2 0 01-2 2H5a2 2 0 01-2-2V4a2 2 0 01-2-2h9z"/></svg></button>
         </div>
     </nav>
-
     <main class="main-content">
-        <section id="agenda" class="tab-section active">
-            <iframe id="frame-agenda" src="agenda.html"></iframe>
-        </section>
-
-        <section id="pacientes" class="tab-section">
-            <iframe id="frame-pacientes" src="paciente.html?role=user"></iframe>
-        </section>
-
-        <section id="orcamento" class="tab-section">
-            <iframe id="frame-orcamento" src="orcamento.html"></iframe>
-        </section>
+        <section id="agenda" class="tab-section active"><iframe id="frame-agenda" src="agenda.html"></iframe></section>
+        <section id="pacientes" class="tab-section"><iframe id="frame-pacientes" src="paciente.html?role=user"></iframe></section>
+        <section id="orcamento" class="tab-section"><iframe id="frame-orcamento" src="orcamento.html"></iframe></section>
     </main>
-
     <script>
+        const MENU_ORDER_KEY = 'scarparo_order_atendente';
+        window.onload = function() { loadMenuOrder(); initDragAndDrop(); };
         function switchTab(tabId, element) {
-            // Atualiza visual do menu
             document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            
             document.getElementById(tabId).classList.add('active');
-            element.classList.add('active');
-
-            // Recarrega o iframe ao entrar na aba para garantir dados frescos
-            const frameMap = {
-                'agenda': 'frame-agenda',
-                'pacientes': 'frame-pacientes',
-                'orcamento': 'frame-orcamento'
-            };
-
-            if (frameMap[tabId]) {
-                document.getElementById(frameMap[tabId]).contentWindow.location.reload();
-            }
+            if(element) element.classList.add('active');
+            const frameMap = {'agenda':'frame-agenda', 'pacientes':'frame-pacientes', 'orcamento':'frame-orcamento'};
+            if(frameMap[tabId]) document.getElementById(frameMap[tabId]).contentWindow.location.reload();
         }
-
-        function logout() { 
-            window.location.href = 'login.html'; 
+        function logout() { window.location.href = 'login.html'; }
+        // Drag logic (igual admin)
+        function initDragAndDrop() {
+            const draggables = document.querySelectorAll('.nav-item');
+            const container = document.getElementById('sortable-menu');
+            draggables.forEach(draggable => {
+                draggable.addEventListener('dragstart', () => { draggable.classList.add('dragging'); });
+                draggable.addEventListener('dragend', () => { draggable.classList.remove('dragging'); saveMenuOrder(); });
+            });
+            container.addEventListener('dragover', e => { e.preventDefault(); const after = getDragAfterElement(container, e.clientY); const drag = document.querySelector('.dragging'); if(after==null) container.appendChild(drag); else container.insertBefore(drag, after); });
         }
+        function getDragAfterElement(c, y) { return [...c.querySelectorAll('.nav-item:not(.dragging)')].reduce((closest, child) => { const box = child.getBoundingClientRect(); const offset = y - box.top - box.height / 2; if (offset < 0 && offset > closest.offset) { return { offset: offset, element: child }; } else { return closest; } }, { offset: Number.NEGATIVE_INFINITY }).element; }
+        function saveMenuOrder() { const items = document.querySelectorAll('.nav-item'); const order = Array.from(items).map(i => i.getAttribute('data-tab')); localStorage.setItem(MENU_ORDER_KEY, JSON.stringify(order)); }
+        function loadMenuOrder() { const order = JSON.parse(localStorage.getItem(MENU_ORDER_KEY)); if(!order) return; const container = document.getElementById('sortable-menu'); const items = Array.from(container.children); order.forEach(tab => { const item = items.find(i => i.getAttribute('data-tab') === tab); if(item) container.appendChild(item); }); }
     </script>
 </body>
 </html>
