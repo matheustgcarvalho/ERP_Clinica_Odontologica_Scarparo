@@ -11,7 +11,7 @@
             --color-black-rich: #121212; 
             --color-white-pure: #FFFFFF; 
             --color-gold-matte: #B9965B; 
-            --color-text-dark: #333333;  
+            --color-text-dark: #333333;   
             --color-text-light: #F8F9FA; 
             --color-gray-input: #E0E0E0; 
         }
@@ -62,8 +62,8 @@
                 </div>
                 <form id="loginForm">
                     <div class="input-group">
-                        <label class="input-label">CPF</label>
-                        <input type="text" id="cpf" class="form-input" placeholder="000.000.000-00" maxlength="14" required>
+                        <label class="input-label">Usuário</label>
+                        <input type="text" id="usuario" class="form-input" placeholder="Seu usuário" required>
                     </div>
                     <div class="input-group">
                         <label class="input-label">Senha</label>
@@ -78,26 +78,21 @@
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            // A lógica de redirecionamento é baseada na SENHA, como solicitado
             const pass = document.getElementById('password').value;
 
             if (pass === 'atendente') {
-                window.location.href = 'perfil_atendente.html'; // Jéssica
+                window.location.href = 'perfil_atendente.html';
             } else if (pass === 'adminhilda') {
-                window.location.href = 'perfil_admin.html'; // Hilda (Admin Total)
+                window.location.href = 'perfil_admin.html';
             } else if (pass === 'adminhenrique') {
-                window.location.href = 'perfil_dentista.html'; // Henrique (Dentista)
+                window.location.href = 'perfil_dentista.html';
             } else {
                 alert('Senha incorreta!');
             }
         });
-
-        document.getElementById('cpf').addEventListener('input', function(e) {
-            let v = e.target.value.replace(/\D/g, "");
-            v = v.replace(/(\d{3})(\d)/, "$1.$2");
-            v = v.replace(/(\d{3})(\d)/, "$1.$2");
-            v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-            e.target.value = v;
-        });
+        
+        // Removi o script que bloqueava letras. Agora pode digitar qualquer coisa no usuário.
     </script>
 </body>
 </html>
