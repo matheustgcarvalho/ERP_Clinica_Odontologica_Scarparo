@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Dentista - Scarparo</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Gerente - Scarparo</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --color-black-rich: #121212; --color-white-bg: #F4F6F9; --color-white-pure: #FFFFFF; --color-gold-matte: #B9965B; --color-text-gray: #757575; --color-danger: #E74C3C; }
+        :root { --color-black-rich: #121212; --color-white-bg: #F4F6F9; --color-white-pure: #FFFFFF; --color-gold-matte: #B9965B; --color-gold-light: #F5EFE6; --color-text-dark: #333333; --color-text-gray: #757575; --color-success: #27AE60; --color-danger: #E74C3C; --color-info-bg: #e0f2fe; --color-info-text: #0284c7; --color-info-border: #bae6fd; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background-color: var(--color-white-bg); display: flex; height: 100vh; overflow: hidden; }
         .sidebar { width: 260px; background-color: var(--color-black-rich); color: var(--color-white-pure); display: flex; flex-direction: column; padding: 1.5rem; }
@@ -35,7 +35,9 @@
 </head>
 <body>
     <nav class="sidebar">
-        <div class="sidebar-header"><img src="logo.png" alt="Logo" class="sidebar-logo-img"><span class="brand-name">Scarparo</span></div>
+        <div class="sidebar-header">
+            <img src="logo.png" alt="Logo" class="sidebar-logo-img"><span class="brand-name">Scarparo</span>
+        </div>
         
         <ul class="nav-menu" id="sortable-menu">
             <li class="nav-item active" draggable="true" data-tab="dashboard" onclick="switchTab('dashboard', this)"><svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Visão Geral</li>
@@ -48,38 +50,31 @@
         </ul>
 
         <div class="sidebar-footer">
-            <div class="user-profile"><div class="user-avatar">H</div><div class="user-info"><p>Henrique</p><span>Dentista</span></div></div>
+            <div class="user-profile"><div class="user-avatar">H</div><div class="user-info"><p>Hilda</p><span>Gerente</span></div></div>
             <button class="btn-logout" title="Sair" onclick="logout()"><svg viewBox="0 0 24 24"><path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 012 2v2h-2V4H5v16h9v-2h2v2a2 2 0 01-2 2H5a2 2 0 01-2-2V4a2 2 0 01-2-2h9z"/></svg></button>
         </div>
     </nav>
+
     <main class="main-content">
-        <section id="dashboard" class="tab-section active"><iframe id="frame-dashboard" src="visao_geral.html?user=Henrique"></iframe></section>
+        <section id="dashboard" class="tab-section active"><iframe id="frame-dashboard" src="visao_geral.html?user=Hilda"></iframe></section>
         <section id="agenda" class="tab-section"><iframe id="frame-agenda" src="agenda.html"></iframe></section>
-        <section id="pacientes" class="tab-section"><iframe id="frame-pacientes" src="paciente.html?role=dentista"></iframe></section>
+        <section id="pacientes" class="tab-section"><iframe id="frame-pacientes" src="paciente.html?role=gerente"></iframe></section>
         <section id="prontuario" class="tab-section"><iframe id="frame-prontuario" src="prontuario.html"></iframe></section>
         <section id="orcamento" class="tab-section"><iframe id="frame-orcamento" src="orcamento.html"></iframe></section>
         <section id="procedimentos" class="tab-section"><iframe id="frame-procedimentos" src="cadastro_procedimento.html"></iframe></section>
         <section id="financeiro" class="tab-section"><div class="header-top"><h2>Financeiro</h2></div><p style="color:#777; padding:0 2rem;">Módulo em desenvolvimento...</p></section>
     </main>
     <script>
-        const MENU_ORDER_KEY = 'scarparo_order_dentista';
-
-        window.onload = function() {
-            applyAccessControl();
-            loadMenuOrder();
-            initDragAndDrop();
-        };
+        const MENU_ORDER_KEY = 'scarparo_menu_order_gerente';
+        window.onload = function() { applyAccessControl(); loadMenuOrder(); initDragAndDrop(); };
 
         function applyAccessControl() {
             const currentUserId = sessionStorage.getItem('scarparo_current_user_id');
             const allUsers = JSON.parse(localStorage.getItem('scarparo_users')) || [];
             const currentUser = allUsers.find(u => u.id === currentUserId);
-
             if (!currentUser) { window.location.href='login.html'; return; }
-
             const items = document.querySelectorAll('.nav-item');
             let firstVisible = null;
-
             items.forEach(item => {
                 const moduleKey = item.getAttribute('data-tab');
                 if (currentUser.access.includes(moduleKey)) {
@@ -89,11 +84,8 @@
                     item.style.display = 'none';
                 }
             });
-
             const activeTab = document.querySelector('.tab-section.active');
-            if (firstVisible && (!activeTab || activeTab.style.display === 'none')) {
-                firstVisible.click();
-            }
+            if (firstVisible && (!activeTab || activeTab.style.display === 'none')) { firstVisible.click(); }
         }
 
         function switchTab(tabId, element) {
@@ -101,12 +93,7 @@
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             if(element) element.classList.add('active');
-            
-            const frameMap = {
-                'dashboard':'frame-dashboard', 'agenda':'frame-agenda', 
-                'pacientes':'frame-pacientes', 'prontuario':'frame-prontuario',
-                'orcamento':'frame-orcamento', 'procedimentos':'frame-procedimentos'
-            };
+            const frameMap = {'dashboard':'frame-dashboard', 'agenda':'frame-agenda', 'pacientes':'frame-pacientes', 'prontuario':'frame-prontuario', 'orcamento':'frame-orcamento', 'procedimentos':'frame-procedimentos'};
             if(frameMap[tabId]) document.getElementById(frameMap[tabId]).contentWindow.location.reload();
         }
         function logout() { window.location.href = 'login.html'; }

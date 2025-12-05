@@ -1,20 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atendente - Scarparo</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Atendente - Scarparo</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --color-black-rich: #121212; --color-white-bg: #F4F6F9; --color-white-pure: #FFFFFF; --color-gold-matte: #B9965B; --color-text-gray: #757575; --color-danger: #E74C3C; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background-color: var(--color-white-bg); display: flex; height: 100vh; overflow: hidden; }
         .sidebar { width: 260px; background-color: var(--color-black-rich); color: var(--color-white-pure); display: flex; flex-direction: column; padding: 1.5rem; }
         .sidebar-header { display: flex; align-items: center; gap: 10px; margin-bottom: 3rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        
-        /* LOGO SIDEBAR */
-        .sidebar-logo-img { width: 40px; height: auto; object-fit: contain; }
-        
+        .logo-icon { width: 35px; height: 35px; fill: var(--color-gold-matte); }
         .brand-name { font-size: 1.5rem; font-weight: 700; color: var(--color-gold-matte); letter-spacing: 1px; }
         .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; overflow-y: auto; }
         .nav-item { padding: 0.8rem 1rem; border-radius: 8px; cursor: grab; display: flex; align-items: center; gap: 12px; color: #A0A0A0; font-size: 0.95rem; transition: all 0.3s; text-decoration: none; }
@@ -33,20 +27,20 @@
         .main-content { flex: 1; overflow: hidden; position: relative; display: flex; flex-direction: column; }
         .tab-section { display: none; height: 100%; flex-direction: column; }
         .tab-section.active { display: flex; }
-        iframe { width: 100%; height: 100%; border: none; flex: 1; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); background: #fff; }
+        iframe { width: 100%; height: 100%; border: none; flex: 1; }
+        .sidebar-logo-img { width: 40px; height: auto; object-fit: contain; }
     </style>
 </head>
 <body>
     <nav class="sidebar">
-        <div class="sidebar-header">
-            <img src="logo.png" alt="Logo" class="sidebar-logo-img">
-            <span class="brand-name">Scarparo</span>
-        </div>
+        <div class="sidebar-header"><img src="logo.png" alt="Logo" class="sidebar-logo-img"><span class="brand-name">Scarparo</span></div>
+        
         <ul class="nav-menu" id="sortable-menu">
             <li class="nav-item active" draggable="true" data-tab="agenda" onclick="switchTab('agenda', this)"><svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>Agenda</li>
             <li class="nav-item" draggable="true" data-tab="pacientes" onclick="switchTab('pacientes', this)"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>Pacientes</li>
             <li class="nav-item" draggable="true" data-tab="orcamento" onclick="switchTab('orcamento', this)"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>Orçamentos</li>
         </ul>
+
         <div class="sidebar-footer">
             <div class="user-profile"><div class="user-avatar">J</div><div class="user-info"><p>Jéssica</p><span>Atendente</span></div></div>
             <button class="btn-logout" title="Sair" onclick="logout()"><svg viewBox="0 0 24 24"><path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 012 2v2h-2V4H5v16h9v-2h2v2a2 2 0 01-2 2H5a2 2 0 01-2-2V4a2 2 0 01-2-2h9z"/></svg></button>
@@ -54,12 +48,29 @@
     </nav>
     <main class="main-content">
         <section id="agenda" class="tab-section active"><iframe id="frame-agenda" src="agenda.html"></iframe></section>
-        <section id="pacientes" class="tab-section"><iframe id="frame-pacientes" src="paciente.html?role=user"></iframe></section>
+        <section id="pacientes" class="tab-section"><iframe id="frame-pacientes" src="paciente.html?role=atendente"></iframe></section>
         <section id="orcamento" class="tab-section"><iframe id="frame-orcamento" src="orcamento.html"></iframe></section>
     </main>
     <script>
         const MENU_ORDER_KEY = 'scarparo_order_atendente';
-        window.onload = function() { loadMenuOrder(); initDragAndDrop(); };
+        window.onload = function() { applyAccessControl(); loadMenuOrder(); initDragAndDrop(); };
+
+        function applyAccessControl() {
+            const currentUserId = sessionStorage.getItem('scarparo_current_user_id');
+            const allUsers = JSON.parse(localStorage.getItem('scarparo_users')) || [];
+            const currentUser = allUsers.find(u => u.id === currentUserId);
+            if (!currentUser) { window.location.href='login.html'; return; }
+            const items = document.querySelectorAll('.nav-item');
+            let firstVisible = null;
+            items.forEach(item => {
+                const moduleKey = item.getAttribute('data-tab');
+                if (currentUser.access.includes(moduleKey)) { item.style.display = 'flex'; if (!firstVisible) firstVisible = item; } 
+                else { item.style.display = 'none'; }
+            });
+            const activeTab = document.querySelector('.tab-section.active');
+            if (firstVisible && (!activeTab || activeTab.style.display === 'none')) { firstVisible.click(); }
+        }
+
         function switchTab(tabId, element) {
             document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -69,7 +80,7 @@
             if(frameMap[tabId]) document.getElementById(frameMap[tabId]).contentWindow.location.reload();
         }
         function logout() { window.location.href = 'login.html'; }
-        // Drag logic (igual admin)
+
         function initDragAndDrop() {
             const draggables = document.querySelectorAll('.nav-item');
             const container = document.getElementById('sortable-menu');

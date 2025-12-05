@@ -5,34 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Scarparo</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
-        :root {
-            --color-black-rich: #121212; 
-            --color-white-pure: #FFFFFF; 
-            --color-gold-matte: #B9965B; 
-            --color-text-dark: #333333;   
-            --color-text-light: #F8F9FA; 
-            --color-gray-input: #E0E0E0; 
-        }
+        :root { --color-black-rich: #121212; --color-white-pure: #FFFFFF; --color-gold-matte: #B9965B; --color-text-dark: #333333; --color-text-light: #F8F9FA; --color-gray-input: #E0E0E0; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { height: 100vh; width: 100vw; overflow: hidden; }
         .login-container { display: flex; height: 100%; width: 100%; }
-        .brand-section {
-            flex: 1; background-color: var(--color-black-rich); display: flex; flex-direction: column;
-            justify-content: center; align-items: center; padding: 2rem; color: var(--color-text-light); position: relative;
-        }
+        .brand-section { flex: 1; background-color: var(--color-black-rich); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 2rem; color: var(--color-text-light); position: relative; }
         .brand-section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url('https://www.transparenttextures.com/patterns/cubes.png'); opacity: 0.05; pointer-events: none; }
         .brand-content { z-index: 1; text-align: center; }
-        
-        /* LOGO IMAGEM NO LOGIN */
-        .login-logo-img {
-            width: 140px; /* Tamanho maior para destaque */
-            height: auto;
-            margin: 0 auto 1.5rem;
-            display: block;
-        }
-
+        .login-logo-img { width: 140px; height: auto; margin: 0 auto 1.5rem; display: block; }
         .brand-title { font-size: 3rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--color-gold-matte); }
         .brand-tagline { font-size: 1.1rem; font-weight: 300; color: var(--color-text-light); }
         .form-section { flex: 1; background-color: var(--color-white-pure); display: flex; justify-content: center; align-items: center; padding: 2rem; }
@@ -46,7 +27,6 @@
         .form-input:focus { border-color: var(--color-gold-matte); background-color: var(--color-white-pure); box-shadow: 0 0 0 4px rgba(185, 150, 91, 0.1); }
         .forgot-password { text-align: right; margin-bottom: 1.5rem; }
         .forgot-password a { color: var(--color-gold-matte); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.3s; }
-        .forgot-password a:hover { color: var(--color-black-rich); }
         .btn-login { width: 100%; padding: 1rem; background-color: var(--color-gold-matte); color: var(--color-black-rich); border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(185, 150, 91, 0.2); }
         .btn-login:hover { background-color: #a3844a; transform: translateY(-2px); box-shadow: 0 6px 8px rgba(185, 150, 91, 0.3); }
         @media (max-width: 768px) { .login-container { flex-direction: column; } .brand-section { flex: 0 0 30%; padding: 1.5rem; } .brand-title { font-size: 1.8rem; } .form-section { flex: 1; align-items: flex-start; padding-top: 3rem; } }
@@ -57,7 +37,6 @@
         <div class="brand-section">
             <div class="brand-content">
                 <img src="logo.png" alt="Logo Scarparo" class="login-logo-img">
-                
                 <h1 class="brand-title">Scarparo</h1>
                 <p class="brand-tagline">Gestão odontológica de alto padrão.</p>
             </div>
@@ -71,7 +50,7 @@
                 <form id="loginForm">
                     <div class="input-group">
                         <label class="input-label">Usuário</label>
-                        <input type="text" id="usuario" class="form-input" placeholder="Seu usuário" required>
+                        <input type="text" id="user" class="form-input" placeholder="Seu usuário" required>
                     </div>
                     <div class="input-group">
                         <label class="input-label">Senha</label>
@@ -84,18 +63,53 @@
         </div>
     </div>
     <script>
+        // Dados Padrão para inicializar se for a primeira vez
+        const DEFAULT_USERS_INIT = [
+            { 
+                id: 'hilda', name: 'Hilda Scarparo', role: 'Gerente', pass: 'adminhilda', 
+                redirect: 'perfil_gerente.html', 
+                access: ['dashboard', 'agenda', 'pacientes', 'prontuario', 'orcamento', 'procedimentos', 'financeiro'] 
+            },
+            { 
+                id: 'henrique', name: 'Dr. Henrique', role: 'Dentista', pass: 'adminhenrique', 
+                redirect: 'perfil_dentista.html', 
+                access: ['dashboard', 'agenda', 'pacientes', 'prontuario', 'financeiro'] 
+            },
+            { 
+                id: 'jessica', name: 'Jéssica', role: 'Atendente', pass: 'atendente', 
+                redirect: 'perfil_atendente.html', 
+                access: ['agenda', 'pacientes', 'orcamento'] 
+            },
+            { 
+                id: 'admin', name: 'Super Admin', role: 'Sistema', pass: 'admin', 
+                redirect: 'perfil_admin.html', 
+                access: ['permissoes'] 
+            }
+        ];
+
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const pass = document.getElementById('password').value;
+            
+            if(!localStorage.getItem('scarparo_users')) {
+                localStorage.setItem('scarparo_users', JSON.stringify(DEFAULT_USERS_INIT));
+            }
 
-            if (pass === 'atendente') {
-                window.location.href = 'perfil_atendente.html';
-            } else if (pass === 'adminhilda') {
-                window.location.href = 'perfil_admin.html';
-            } else if (pass === 'adminhenrique') {
-                window.location.href = 'perfil_dentista.html';
+            const userInput = document.getElementById('user').value.toLowerCase().trim();
+            const passInput = document.getElementById('password').value.trim();
+            const users = JSON.parse(localStorage.getItem('scarparo_users'));
+            const foundUser = users.find(u => u.id === userInput && u.pass === passInput);
+
+            if (foundUser) {
+                sessionStorage.setItem('scarparo_current_user_id', foundUser.id);
+                
+                // Redirecionamento de segurança caso o localStorage esteja desatualizado
+                if (userInput === 'hilda') window.location.href = 'perfil_gerente.html';
+                else if (userInput === 'henrique') window.location.href = 'perfil_dentista.html';
+                else if (userInput === 'jessica') window.location.href = 'perfil_atendente.html';
+                else if (userInput === 'admin') window.location.href = 'perfil_admin.html';
+                else window.location.href = foundUser.redirect;
             } else {
-                alert('Senha incorreta!');
+                alert('Usuário ou senha incorretos!');
             }
         });
     </script>
